@@ -14,14 +14,16 @@ Script to automatically create a release in your github repo based on the jira t
 
 ## Use
 
-### Ensure to set the following in the script
+### Ensure to set the following as environemnt variables
 
 - `GITHUB_ORGANIZATION`
 - `GITHUB_REPOSITORY`
 - `GITHUB_ACCESS_TOKEN`
 - `ORGANIZATION`
+- `REPOS`
 
-To hit it off, simply run './create_release.sh' if you're in the same directory as the script or `<path-to-script-directory>/create_release.sh`
+then run `./create_release.sh`, alternatively set the variables at runtime and run `REPOS="../front-end ../../back-end ./tools" ORGANIZATION='myorg' GITHUB_REPOSITORY='githubreponame' GITHUB_ORGANIZATION='gh_org' GITHUB_ACCESS_TOKEN="supersecuretoken" ./create_release.sh`.
+
 
 ### Sample
 
