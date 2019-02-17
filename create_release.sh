@@ -3,9 +3,19 @@
 # 1. Get you a personal GitHub token (https://github.com/settings/tokens/new)
 # 2. Give your token full rights over the "repo" scope
 
-GITHUB_ORGANIZATION=""
-GITHUB_REPOSITORY=""
-GITHUB_ACCESS_TOKEN=""
+log-fail() {
+  declare desc="log fail formatter"
+  echo "$@" 1>&2
+  exit 1
+}
+
+check_required_variables() {
+    [[ -z "$GITHUB_ACCESS_TOKEN" ]] && log-fail "You must specify a GITHUB_ACCESS_TOKEN environment variable"
+    [[ -z "$GITHUB_ORGANIZATION" ]] && log-fail "You must specify a GITHUB_ORGANIZATION environment variable"
+    [[ -z "$GITHUB_REPOSITORY" ]] && log-fail "You must specify a GITHUB_REPOSITORY environment variable"
+    [[ -z "$ORGANIZATION" ]] && log-fail "You must specify a jira ORGANIZATION environment variable"
+    [[ -z "$REPOS" ]] && log-fail "You must specify a list of REPOS to get infromation from environment variable"
+}
 
 check_jq() {
     if ! [ -x "$(command -v jq)" ]; then
@@ -37,9 +47,9 @@ get_ticket_in_latest_release(){
     _previous=$(git tag -l --sort=-creatordate | grep -v vTR | grep "^v" | head -2 | tail -1)
     echo "Tickets merged between $_previous and $_current"
     _all_tickets=""
-    for repo in front-end back-end tools # example repos assuming they are siblings of the folder the script is in
+    for repo in $REPOS
         do 
-            cd ../$repo
+            cd $repo
             _tickets=$(git log $_previous..$_current --oneline | grep -v Merge | grep -E -o 'AC-[0-9]{4,}' | sort -u) # we have a pre-commit hook that appends the ticket id to the commits
             _all_tickets="$_all_tickets $_tickets"
         done
@@ -53,7 +63,7 @@ get_jira_issue_details(){
     for issue in $@
         do
             echo -n "Getting $issue details.."
-            echo -n "* [$issue](https://{ORGANIZATION}.atlassian.net/browse/$issue) - " >> .release.txt # replace ORGANIZATION with your organisations name on jira
+            echo -n "* [$issue](https://${ORGANIZATION}.atlassian.net/browse/$issue) - " >> .release.txt
             jira issue $issue | egrep 'Summary' | awk '{out=$6; for(i=7;i<=NF;i++){out=out" "$i}; print out}' >> .release.txt # leave out the color codes in the string
             echo "Done."
         done
@@ -84,6 +94,7 @@ cleanup() {
 }
 
 main() {
+    check_required_variables
     check_jq
     check_jira_cli
     check_jira_setup
