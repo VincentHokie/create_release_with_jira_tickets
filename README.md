@@ -23,6 +23,11 @@ Script to automatically create a release in your github repo based on the jira t
 
 To hit it off, simply run './create_release.sh' if you're in the same directory as the script or `<path-to-script-directory>/create_release.sh`
 
+### Sample
+
+Here's an example release message created by the script
+![Alt Text](/media/example-release-message.png?raw=true)
+
 #
 
 This is work inspired by the script created [here](https://github.com/reactiveops/release.sh).
