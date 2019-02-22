@@ -50,7 +50,7 @@ get_ticket_in_latest_release(){
     for repo in $REPOS
         do 
             cd $repo
-            _tickets=$(git log $_previous..$_current --graph --decorate --oneline | grep -E -o '/AC-[0-9]{4,}' | grep -E -o 'AC-[0-9]{4,}' | sort -u)
+            _tickets=$(git log $_previous..$_current --graph --decorate --oneline | grep -E -o '/[A-Z]{2}-[0-9]{4,}' | grep -E -o '[A-Z]{2}-[0-9]{4,}' | sort -u)
             _all_tickets="$_all_tickets $_tickets"
         done
     _all_tickets=$(echo $_all_tickets | tr " " "\n" | sort -u)
